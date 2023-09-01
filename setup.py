@@ -9,6 +9,7 @@ setup(
     license="MIT",
     packages=["surface_coatings"],
     zip_safe=False,
+    packages=setuptools.find_packages(),
     # Temporarily turn off entry point setup
     #   entry_points={
     #         "mbuild.plugins": [
