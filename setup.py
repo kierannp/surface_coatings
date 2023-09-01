@@ -7,7 +7,6 @@ setup(
     author="Co D. Quach",
     author_email="daico007@gmail.com",
     license="MIT",
-    packages=["surface_coatings"],
     zip_safe=False,
     packages=setuptools.find_packages(),
     # Temporarily turn off entry point setup
