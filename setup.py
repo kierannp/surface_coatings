@@ -8,7 +8,7 @@ setup(
     author_email="daico007@gmail.com",
     license="MIT",
     zip_safe=False,
-    packages=setuptools.find_packages(),
+    packages=["surface_coatings"],
     # Temporarily turn off entry point setup
     #   entry_points={
     #         "mbuild.plugins": [
