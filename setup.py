@@ -9,7 +9,8 @@ setup(
     license="MIT",
     packages=find_packages(),
     package_data={
-        "": ["monomers/*/*.{pdb,mol2}", "*.mol2", "*.pdb"]
+        "": ["monomers/*/*.{pdb,mol2}", "*.mol2", "*.pdb",
+             "molecules/one_port_pdbs/*.pdb"]
 
     },
     package_dir={"surface_coatings": "surface_coatings"},
