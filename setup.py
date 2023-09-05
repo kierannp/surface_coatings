@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="surface_coatings",
@@ -7,15 +7,12 @@ setup(
     author="Co D. Quach",
     author_email="daico007@gmail.com",
     license="MIT",
+    packages=find_packages(),
+    package_data={
+        "surface_coatings": ["monomers/*/*.{pdb,mol2}", "*.mol2", "*.pdb"]
+
+    },
+    package_dir={"surface_coatings": "surface_coatings"},
+    include_package_data=True,
     zip_safe=False,
-    packages=["surface_coatings"],
-    # Temporarily turn off entry point setup
-    #   entry_points={
-    #         "mbuild.plugins": [
-    #             "Monolayer = surface_coatings.monolayer:Monolayer",
-    #             "DualMonolayer = surface_coatings.monolayer:DualMonolayer",
-    #             "SolvatedMonolayer = surface_coatings.solvated_monolayer:SolvatedMonolayer",
-    #             "SolvatedDualMonolayer = surface_coatings.solvated_monolayer:SolvatedDualMonolayer",
-    #         ]
-    #     }
 )
