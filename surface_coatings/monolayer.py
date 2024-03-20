@@ -33,13 +33,14 @@ class Monolayer(mb.Compound):
     seed: int, optional, default= 12345
         Random seed used for any subprocess.
     """
-    def __init__(self, surface, chains, n_chains, fractions=None, backfill=H(), tile_x=1, tile_y=1, rotate_chains=True, seed=12345, **kwargs):
+    def __init__(self, surface, chains, n_chains, pattern=None, fractions=None, backfill=H(), tile_x=1, tile_y=1, rotate_chains=True, seed=12345, **kwargs):
         super(Monolayer, self).__init__()
 
         tiled_compound = mb.lib.recipes.TiledCompound(surface, n_tiles=(tile_x, tile_y, 1))
         self.add(tiled_compound, label="tiled_surface")
-
-        pattern = mb.Random2DPattern(n_chains, seed=seed)
+        
+        if not pattern:
+            pattern = mb.Random2DPattern(n_chains, seed=seed)
 
         if not isinstance(chains, list):
             chains=list(chains)
@@ -81,10 +82,12 @@ class Monolayer(mb.Compound):
             warn("\n No fractions provided. Assuming a single chain type.")
         
         
-        attached_chains, backills = pattern.apply_to_compound(guest=chains[-1],
-                                                              host=self["tiled_surface"],
-                                                              backfill=backfill,
-                                                              **kwargs)
+        attached_chains, backills = pattern.apply_to_compound(
+            guest=chains[-1],
+            host=self["tiled_surface"],
+            backfill=backfill,
+            **kwargs
+        )
         self.add(attached_chains)
         self.add(backills)
 
