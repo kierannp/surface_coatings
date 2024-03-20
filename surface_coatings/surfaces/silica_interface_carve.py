@@ -63,12 +63,13 @@ class SilicaInterfaceCarve(mb.Compound):
         '''
 
         self._cleave_interface(bulk_silica, tile_x, tile_y, thickness)
+        self.periodicity = [True, True, False]
+        self.box = bulk_silica.box
         self.generate_bonds(name_a='Si', name_b='O', dmin=0.0, dmax=0.20419)
         self._strip_stray_atoms()
         self._bridge_dangling_Os(self._oh_density, thickness)
         self._identify_surface_sites(thickness)
         self._adjust_stoichiometry()
-        self.periodicity = [True, True, False]
 
     def _cleave_interface(self, bulk_silica, tile_x, tile_y, thickness):
         """Carve interface from bulk silica.
@@ -114,7 +115,7 @@ class SilicaInterfaceCarve(mb.Compound):
         dangling_Os = [atom for atom in self.particles()
                        if atom.name == 'O' and
                        atom.pos[2] > surface_site_buffer and
-                       len(self.bond_graph.neighbors(atom)) == 1]
+                       len(list(self.bond_graph.neighbors(atom))) == 1]
 
         n_bridges = int((len(dangling_Os) - target) / 2)
 
@@ -122,11 +123,11 @@ class SilicaInterfaceCarve(mb.Compound):
             bridged = False
             while not bridged:
                 O1 = random.choice(dangling_Os)
-                Si1 = self.bond_graph.neighbors(O1)[0]
+                Si1 = list(self.bond_graph.neighbors(O1))[0]
                 for O2 in dangling_Os:
                     if O2 == O1:
                         continue
-                    Si2 = self.bond_graph.neighbors(O2)[0]
+                    Si2 = list(self.bond_graph.neighbors(O2))[0]
                     if Si1 == Si2:
                         continue
                     if any(neigh in self.bond_graph.neighbors(Si2)
@@ -145,7 +146,7 @@ class SilicaInterfaceCarve(mb.Compound):
         """Label surface sites and add ports above them. """
         surface_site_buffer = self._surface_site_buffer
         for atom in list(self.particles()):
-            if len(self.bond_graph.neighbors(atom)) == 1:
+            if len(list(self.bond_graph.neighbors(atom))) == 1:
                 if atom.name == 'O' and atom.pos[2] > surface_site_buffer:
                     atom.name = 'O_Surface'
                     port = mb.Port(anchor=atom)
@@ -162,7 +163,7 @@ class SilicaInterfaceCarve(mb.Compound):
         bottom_Os = [atom for atom in self.particles()
                      if atom.name == 'O' and
                         atom.pos[2] < self._O_buffer and
-                        len(self.bond_graph.neighbors(atom)) == 1]
+                        len(list(self.bond_graph.neighbors(atom))) == 1]
 
         for _ in range(n_deletions):
             O1 = random.choice(bottom_Os)
