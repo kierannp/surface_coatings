@@ -60,6 +60,8 @@ class Monolayer(mb.Compound):
         # respective fractions.
         if len(chains) > 1:
             for chain, fraction in zip(chains[:-1], fractions[:-1]):
+                if not fraction:
+                    continue # skip chains when fraction is 0
                 # Create sub-pattern for this chain type
                 subpattern = deepcopy(pattern)
                 n_points = int(round(fraction * n_chains))
@@ -81,13 +83,24 @@ class Monolayer(mb.Compound):
         else:
             warn("\n No fractions provided. Assuming a single chain type.")
         
-        
-        attached_chains, backills = pattern.apply_to_compound(
-            guest=chains[-1],
-            host=self["tiled_surface"],
-            backfill=backfill,
-            **kwargs
-        )
+
+        if fractions[-1]:  # fill backfill     
+            attached_chains, backills = pattern.apply_to_compound(
+                guest=chains[-1],
+                host=self["tiled_surface"],
+                backfill=backfill,
+            )
+        else: # fill hydrogens only
+            pattern = mb.Random2DPattern(1, seed=seed)
+            hdown = H()
+            port = hdown["up"]
+            hdown.labels.update({"down":port})
+            del hdown.labels["up"] # change port info
+            attached_chains, backills = pattern.apply_to_compound(
+                guest=hdown,
+                host=self["tiled_surface"],
+                backfill=backfill,
+            )
         self.add(attached_chains)
         self.add(backills)
 
